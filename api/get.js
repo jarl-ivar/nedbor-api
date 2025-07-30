@@ -17,18 +17,20 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Hent nåværende lokal tid
     const now = new Date();
-    const currentHour = now.getHours();
     const today = now.toISOString().split("T")[0];
 
-    // Filtrer til kun dagens dato og neste 12 timer
     const rainPerHour = [];
+    const fromHour = 3;
+    const toHour = 12;
+
     for (let i = 0; i < data.hourly.time.length; i++) {
       const timestamp = data.hourly.time[i];
       const hour = new Date(timestamp);
+
       if (hour.getDate() !== now.getDate()) continue;
-      if (hour.getHours() >= currentHour && hour.getHours() < currentHour + 12) {
+      const h = hour.getHours();
+      if (h >= fromHour && h < toHour) {
         rainPerHour.push({
           time: timestamp,
           mm: data.hourly.precipitation[i]
@@ -40,6 +42,8 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       location: { lat, lon },
+      checkedAt: now.toISOString(),
+      checkedHours: `${fromHour}:00–${toHour - 1}:59`,
       threshold_mm: 2.0,
       totalRainNext12Hours: totalRain,
       rainPerHour
