@@ -21,8 +21,8 @@ export default async function handler(req, res) {
     const today = now.toISOString().split("T")[0];
 
     const rainPerHour = [];
-    const fromHour = 9;
-    const toHour = 18;
+    const fromHour = 5;
+    const toHour = 16;
 
     for (let i = 0; i < data.hourly.time.length; i++) {
       const timestamp = data.hourly.time[i];
